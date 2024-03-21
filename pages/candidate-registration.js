@@ -10,16 +10,16 @@ import images from '../assets';
 import Button from '../components/Button/Button';
 import Input from '../components/Input/Input';
 
-const allowedVoters = () => {
+const CandidateRegistration = () => {
   const [fileUrl, setFileUrl] = useState(null);
-  const [formInput, setFormInput] = useState({
+  const [candidateForm, setCandidateForm] = useState({
     name: '',
     address: '',
-    position: '',
+    age: '',
   });
 
   const router = useRouter();
-  const { uploadToIPFS, createVoter, voterArray, getAllVoterData } = useContext(VotingContext);
+  const { uploadToIPFS, setCandidate, candidateArray, getNewCandidate } = useContext(VotingContext);
 
   //------------Voters image drop-----------//
   const onDrop = useCallback(async (acceptedFil) => {
@@ -28,18 +28,16 @@ const allowedVoters = () => {
     setFileUrl(url);
   });
 
-  const {getRootProps, getInputProps} = useDropzone({
+  const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: 'image/*',
     maxSize: 5000000,
   })
 
-useEffect(() => {
-  getAllVoterData();
-}, [])
-console.log(voterArray);
-
-
+  useEffect(() => {
+    getNewCandidate();
+  }, [])
+  
   //--------------JSX part--------------//
 
   return (
@@ -47,16 +45,16 @@ console.log(voterArray);
       <div>
         {fileUrl && (
           <div className={Style.voterInfo}>
-            <img src={fileUrl} alt="Voter Image"/>
+            <img src={fileUrl} alt="Voter Image" />
             <div className={Style.voterInfo__paragraph}>
               <p>
-                Name: <span>&nbsp; {formInput.name}</span>
+                Name: <span>&nbsp; {candidateForm.name}</span>
               </p>
               <p>
-                Add: &nbsp; <span>{formInput.address.slice(0, 20)}</span>
+                Add: &nbsp; <span>{candidateForm.address.slice(0, 20)}</span>
               </p>
               <p>
-                Pos: &nbsp; <span>{formInput.position}</span>
+                Age: &nbsp; <span>{candidateForm.age}</span>
               </p>
             </div>
           </div>
@@ -76,15 +74,16 @@ console.log(voterArray);
               </p>
 
               <div className={Style.card}>
-                {voterArray.map((el, i) => (
+                {candidateArray.map((el, i) => (
                   <div key={i +1} className={Style.card__box}>
                     <div className={Style.image}>
-                      <img src={el[4]} alt="Profile photo"/>
+                      <img src={el[3]} alt="Profile photo"/>
                     </div>
 
                     <div className={Style.card__info}>
-                      <p>{el[1]}</p>
-                      <p>Address: {el[3].slice(0, 10)}...</p>
+                      <p>{el[1]} #{el[2].toNumber()}</p>
+                      <p>{el[0]}</p>
+                      <p>Address: {el[6].slice(0, 10)}...</p>
                     </div>
                   </div>
                 ))}
@@ -96,7 +95,7 @@ console.log(voterArray);
 
       <div className={Style.voter}>
         <div className={Style.voter__container}>
-          <h1>Create New Voter</h1>
+          <h1>Create New Candidate</h1>
 
           <div className={Style.voter__container__box}>
             <div className={Style.voter__container__box__div}>
@@ -107,12 +106,12 @@ console.log(voterArray);
                   <p>Upload File: JPG, PNG, GIF, WEBM MAX 10MB</p>
 
                   <div className={Style.voter__container__box__div__image}>
-                    <Image 
-                    src={images.upload}
-                    width={150}
-                    height={150}
-                    objectFit="contain"
-                    alt="File upload"
+                    <Image
+                      src={images.upload}
+                      width={150}
+                      height={150}
+                      objectFit="contain"
+                      alt="File upload"
                     />
 
                     <p>Drag & Drop File</p>
@@ -125,35 +124,35 @@ console.log(voterArray);
         </div>
 
         <div className={Style.input__container}>
-          <Input 
-            inputType="text" 
+          <Input
+            inputType="text"
             title="Name"
-            placeholder="Voter name"
-            handleClick={(e) => setFormInput({...formInput, name: e.target.value})}
+            placeholder="Candidate name"
+            handleClick={(e) => setCandidateForm({ ...candidateForm, name: e.target.value })}
           />
 
-          <Input 
-            inputType="text" 
+          <Input
+            inputType="text"
             title="Address"
-            placeholder="Voter address"
-            handleClick={(e) => setFormInput({...formInput, address: e.target.value})}
+            placeholder="Candidate address"
+            handleClick={(e) => setCandidateForm({ ...candidateForm, address: e.target.value })}
           />
 
-          <Input 
-            inputType="text" 
-            title="Position"
-            placeholder="Voter position"
-            handleClick={(e) => setFormInput({...formInput, position: e.target.value})}
+          <Input
+            inputType="text"
+            title="Age"
+            placeholder="Candidate age"
+            handleClick={(e) => setCandidateForm({ ...candidateForm, age: e.target.value })}
           />
 
           <div className={Style.Button}>
-            <Button btnName="Authorized Voter" handleClick={() => createVoter(formInput, fileUrl, router)}/>
+            <Button btnName="Authorized Candidate" handleClick={() => setCandidate(candidateForm, fileUrl, router)} />
           </div>
         </div>
       </div>
-      
+
       {/* ------------------------------------ */}
-      
+
       <div className={Style.createdVoter}>
         <div className={Style.createdVoter__info}>
           <Image src={images.creator} alt="user Profile" />
@@ -166,4 +165,4 @@ console.log(voterArray);
   )
 }
 
-export default allowedVoters;
+export default CandidateRegistration;
